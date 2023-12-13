@@ -1,7 +1,6 @@
 async function signup(e){
     try{
         e.preventDefault();
-        // console.log(e.target.email.value);
 
         const signupDetails = {
             name : e.target.name.value,
