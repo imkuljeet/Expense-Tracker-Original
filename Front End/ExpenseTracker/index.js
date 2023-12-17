@@ -1,61 +1,65 @@
-function addNewExpense(e) {
+function addNewExpense(e){
   e.preventDefault();
 
   const expenseDetails = {
-    expenseamount: e.target.expenseAmount.value,
-    description: e.target.description.value,
-    category: e.target.category.value,
-  };
+      expenseamount: e.target.expenseamount.value,
+      description: e.target.description.value,
+      category: e.target.category.value,
 
-  console.log(expenseDetails);
+  }
+  console.log(expenseDetails)
+  const token  = localStorage.getItem('token')
+  axios.post('http://localhost:3000/expense/addexpense',expenseDetails,  { headers: {"Authorization" : token} })
+      .then((response) => {
 
-  axios
-    .post("http://localhost:3000/expense/addexpense", expenseDetails)
-    .then((response) => {
       addNewExpensetoUI(response.data.expense);
-    })
-    .catch((err) => console.log(err));
+
+  }).catch(err => showError(err))
+
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  axios
-    .get("http://localhost:3000/expense/getexpenses")
-    .then((response) => {
-      response.data.expenses.forEach((expense) => {
-        addNewExpensetoUI(expense);
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+window.addEventListener('DOMContentLoaded', ()=> {
+  const token  = localStorage.getItem('token')
+  
+  axios.get('http://localhost:3000/expense/getexpenses', { headers: {"Authorization" : token} })
+  .then(response => {
+          response.data.expenses.forEach(expense => {
+
+              addNewExpensetoUI(expense);
+          })
+  }).catch(err => {
+      showError(err)
+  })
 });
 
-function addNewExpensetoUI(expense) {
-  const parentElement = document.getElementById("listOfExpenses");
+function addNewExpensetoUI(expense){
+  const parentElement = document.getElementById('listOfExpenses');
   const expenseElemId = `expense-${expense.id}`;
   parentElement.innerHTML += `
-        <li id=${expenseElemId}>
-            ${expense.expenseamount} - ${expense.category} - ${expense.description}
-            <button onclick='deleteExpense(event, ${expense.id})'>
-                Delete Expense
-            </button>
-        </li>`;
+      <li id=${expenseElemId}>
+          ${expense.expenseamount} - ${expense.category} - ${expense.description}
+          <button onclick='deleteExpense(event, ${expense.id})'>
+              Delete Expense
+          </button>
+      </li>`
 }
 
-function deleteExpense(event, expenseId) {
-  console.log("Deleting expense with ID:", expenseId);
+function deleteExpense(e, expenseid) {
+  const token = localStorage.getItem('token')
+  axios.delete(`http://localhost:3000/expense/deleteexpense/${expenseid}`,  { headers: {"Authorization" : token} }).then(() => {
 
-  axios
-    .delete(`http://localhost:3000/expense/deleteexpense/${expenseId}`)
-    .then(() => {
-      removeExpensefromUI(expenseId);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+          removeExpensefromUI(expenseid);
+
+  }).catch((err => {
+      showError(err);
+  }))
 }
 
-function removeExpensefromUI(expenseid) {
+function showError(err){
+  document.body.innerHTML += `<div style="color:red;"> ${err}</div>`
+}
+
+function removeExpensefromUI(expenseid){
   const expenseElemId = `expense-${expenseid}`;
   document.getElementById(expenseElemId).remove();
 }

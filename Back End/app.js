@@ -1,29 +1,32 @@
+const path = require('path');
+
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+var cors = require('cors')
 const sequelize = require('./util/database');
 const User = require('./models/users');
-const userController = require('./controllers/user');
+const Expense = require('./models/expenses');
 
-const userRoutes = require('./routes/user');
-const expenseRoutes = require('./routes/expense');
+const userRoutes = require('./routes/user')
+const expenseRoutes = require('./routes/expense')
 
 const app = express();
 
 app.use(cors());
 
-app.use(bodyParser.json());
+app.use(express.json());  
 
-app.use('/user',userRoutes);
-app.use('/expense',expenseRoutes);
+app.use('/user', userRoutes)
+app.use('/expense', expenseRoutes)
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 
 
-sequelize
-.sync()
-.then((result)=>{
-    app.listen(3000);
-})
-.catch((err)=>{
-    console.log(err);
-})
+sequelize.sync()
+    .then(() => {
+        app.listen(3000);
+    })
+    .catch(err => {
+        console.log(err);
+    })
