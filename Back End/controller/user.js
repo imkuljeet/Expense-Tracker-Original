@@ -1,3 +1,4 @@
+
 const User = require('../models/users');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -29,8 +30,8 @@ function isstringinvalid(string){
 
 }
 
-const generateAccessToken = (id, name) => {
-    return jwt.sign({ userId : id, name: name } ,'secretkey');
+const generateAccessToken = (id, name, ispremiumuser) => {
+    return jwt.sign({ userId : id, name: name, ispremiumuser } ,'secretkey');
 }
 
 const login = async (req, res) => {
