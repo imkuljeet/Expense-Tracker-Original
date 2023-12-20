@@ -10,14 +10,14 @@ const authenticate = (req, res, next) => {
         console.log('userID >>>> ', user.userId)
         User.findByPk(user.userId).then(user => {
 
-            req.user = user; ///ver
+            req.user = user; 
             next();
         })
 
       } catch(err) {
         console.log(err);
         return res.status(401).json({success: false})
-        // err
+        
       }
 
 }

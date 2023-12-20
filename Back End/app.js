@@ -15,14 +15,12 @@ const premiumFeatureRoutes = require('./routes/premiumFeature')
 const app = express();
 const dotenv = require('dotenv');
 
-// get config vars
 dotenv.config();
 
 
 app.use(cors());
 
-// app.use(bodyParser.urlencoded());  ////this is for handling forms
-app.use(express.json());  //this is for handling jsons
+app.use(express.json());  
 
 app.use('/user', userRoutes)
 app.use('/expense', expenseRoutes)
