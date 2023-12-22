@@ -4,33 +4,39 @@ const sequelize = require('../util/database');
 
 const addexpense = async (req, res) => {
     const t = await sequelize.transaction();
-    const { expenseamount, description, category } = req.body;
+    try {
+        const { expenseamount, description, category } = req.body;
 
-    if(expenseamount == undefined || expenseamount.length === 0 ){
-        return res.status(400).json({success: false, message: 'Parameters missing'})
-    }
-    
-    Expense.create({ expenseamount, description, category, userId: req.user.id},{transaction: t}).then(expense => {
+        if (expenseamount == undefined || expenseamount.length === 0) {
+            return res.status(400).json({ success: false, message: 'Parameters missing' });
+        }
+
+        const expense = await Expense.create(
+            { expenseamount, description, category, userId: req.user.id },
+            { transaction: t }
+        );
+
         const totalExpense = Number(req.user.totalExpenses) + Number(expenseamount);
-        console.log('total Expense amt is',totalExpense);
+        console.log('total Expense amt is', totalExpense);
 
-        User.update({
-            totalExpenses: totalExpense
-        },{
-            where: {id: req.user.id},
-            transaction: t
-        }).then(async()=>{
-            await t.commit();
-            res.status(200).json({expense: expense})
-        }).catch(async(err)=>{
-            await t.rollback();
-            res.status(500).json({success : false, error: err})
-        })
-    }).catch(async (err) => {
+        await User.update(
+            {
+                totalExpenses: totalExpense,
+            },
+            {
+                where: { id: req.user.id },
+                transaction: t,
+            }
+        );
+
+        await t.commit();
+        res.status(200).json({ expense: expense });
+    } catch (err) {
         await t.rollback();
-        return res.status(500).json({success : false, error: err})
-    })
-}
+        return res.status(500).json({ success: false, error: err });
+    }
+};
+
 
 const getexpenses = (req, res)=> {
     
