@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 
@@ -7,33 +8,47 @@ const Forgotpassword = require('../models/forgotpassword');
 const forgotpassword = async (req, res) => {
     const { email } = req.body;
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp-relay.brevo.com',
-        port: 587,
-        auth: {
-            user: 'iamkkashyap@gmail.com',
-            pass: 'xsmtpsib-40fea8a82e56720fbaa75aa9acf63947d0d0fd6159ea57715af867648d20f605-OhEFnA6SYNM4dZXm'
+    const user = await User.findOne({ where: { email } });
+
+    if (user) {
+        const id = uuid.v4();
+        user.createForgotpassword({ id, active: true })
+            .catch(err => {
+                throw new Error(err);
+            });
+
+        const transporter = nodemailer.createTransport({
+            host: 'smtp-relay.brevo.com',
+            port: 587,
+            auth: {
+                user: 'iamkkashyap@gmail.com',
+                pass: 'xsmtpsib-40fea8a82e56720fbaa75aa9acf63947d0d0fd6159ea57715af867648d20f605-vc5LKQWsUMEGbCH2'
+            }
+        });
+
+        const mailOptions = {
+            from: 'iamkkashyap@gmail.com',
+            to: email,
+            subject: 'DUMMY MAIL - Welcome to NodeJS Brevo Combo',
+            text: 'Its a DUMMY MAIL..This is an email using Brevo so that we can send mail easily',
+            html: `<h1>Click on the link below to reset the Password.</h1><a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`,
+        };
+        
+
+        try {
+            const result = await transporter.sendMail(mailOptions);
+            console.log('Email sent successfully');
+            res.status(200).json({ message: 'Email sent successfully' });
+
+        } catch (error) {
+            console.error('Email send failed with error:', error);
+            res.status(500).json({ error: 'Failed to send email' });
         }
-    });
-
-    const mailOptions = {
-        from: 'iamkkashyap@gmail.com',
-        to: email,
-        subject: 'DUMMY MAIL - Welcome to NodeJS Brevo Combo',
-        text: 'Its a DUMMY MAIL..This is an email using Brevo so that we can send mail easily',
-    };
-
-    try {
-        const result = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully');
-        res.status(200).json({ message: 'Email sent successfully' });
-
-    } catch (error) {
-        console.error('Email send failed with error:', error);
-        res.status(500).json({ error: 'Failed to send email' });
+    } else {
+        // Handle the case when the user is not found
+        res.status(404).json({ error: 'User not found' });
     }
 };
-
 
 const resetpassword = (req, res) => {
     const id =  req.params.id;
