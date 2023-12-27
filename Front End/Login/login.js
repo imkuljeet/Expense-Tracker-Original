@@ -18,4 +18,8 @@ function login(e) {
       document.body.innerHTML += `<div style="color:red;">${err.message} <div>`;
   })
 }
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY2MjcwNTE3MX0.wDC7ABZuczLS4Zqv8Yzquqi2bGwX5J_pWqamP7gXS4I
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY2MjcwNTE3MX0.wDC7ABZuczLS4Zqv8Yzquqi2bGwX5J_pWqamP7gXS4I
+
+function forgotpassword() {
+  window.location.href = "../ForgotPassword/index.html"
+}
