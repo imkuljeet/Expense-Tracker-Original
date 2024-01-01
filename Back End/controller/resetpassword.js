@@ -22,7 +22,7 @@ const forgotpassword = async (req, res) => {
             port: 587,
             auth: {
                 user: 'iamkkashyap@gmail.com',
-                pass: 'xsmtpsib-40fea8a82e56720fbaa75aa9acf63947d0d0fd6159ea57715af867648d20f605-vc5LKQWsUMEGbCH2'
+                pass: 'OC3fwv7HZ2gATFRL'
             }
         });
 

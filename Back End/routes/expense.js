@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.post('/addexpense', userauthentication.authenticate,  expenseController.addexpense )
 
+router.get('/download', userauthentication.authenticate, expenseController.downloadExpenses)
+
 router.get('/getexpenses', userauthentication.authenticate ,  expenseController.getexpenses )
 
 router.delete('/deleteexpense/:expenseid', userauthentication.authenticate , expenseController.deleteexpense)

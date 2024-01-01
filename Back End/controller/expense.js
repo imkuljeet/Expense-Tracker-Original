@@ -1,6 +1,7 @@
 const Expense = require('../models/expenses');
 const User = require('../models/users');
 const sequelize = require('../util/database');
+const AWS = require('aws-sdk');
 
 const addexpense = async (req, res) => {
     const t = await sequelize.transaction();
@@ -63,21 +64,7 @@ const deleteexpense = async (req, res) => {
         totalExpenses: req.user.totalExpenses - expense.expenseamount
     },{where: {id: req.user.id}},{transaction: t});
 
-    // console.log("expense is here",expense);
-
-    // const totalExpense = Number(req.user.totalExpenses) - Number(expense.expenseamount);
-
-    // await User.update(
-    //     {
-    //         totalExpenses: totalExpense,
-    //     },
-    //     {
-    //         where: { id: req.user.id },
-    //         transaction: t,
-    //     }
-    // );
-
-
+   
     let destroy = await Expense.destroy({where: { id: expenseid, userId: req.user.id }},{transaction: t});
         if(destroy === 0){
             await t.rollback();
@@ -91,8 +78,64 @@ const deleteexpense = async (req, res) => {
     }
 }
 
+// const downloadExpenses =  async (req, res) => {
+//     const expenses = await req.expenses.getexpenses();
+//     console.log(expenses);
+// };
+
+function uploadTos3(data, filename){
+    const BUCKET_NAME ='expensetrackingapp22';
+    const IAM_USER_KEY = 'AKIAQMMRBQ7UGMAC43VM';
+    const IAM_USER_SECRET = '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';
+
+    let s3bucket = new AWS.S3({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET
+        // Bucket: BUCKET_NAME
+    })
+
+    s3bucket.createBucket(()=>{
+        var params = {
+            Bucket: BUCKET_NAME,
+            Key: filename,
+            Body: data
+        }
+
+        s3bucket.upload(params, (err, s3response)=>{
+            if(err){
+                console.log("Something went wrong",err)
+            }else{
+                console.log("success",s3response)
+            }
+        })
+    })
+
+}
+
+
+
+const downloadExpenses = async (req, res) => {
+    try {
+      // Assuming req.user is the current user object
+      const expenses = await req.user.getExpenses();
+      console.log(expenses);
+
+      const stringifiedExpenses = JSON.stringify(expenses);
+      const filename = 'Expense.txt';
+      const fileURl = uploadTos3(stringifiedExpenses,filename);
+      res.status(200).json({ fileURl, success: true })
+    
+
+      // Add logic to send expenses data as a downloadable file
+    } catch (error) {
+      console.error('Error downloading expenses:', error);
+      return res.status(500).json({ success: false, error: 'Failed to download expenses' });
+    }
+  };
+
 module.exports = {
     deleteexpense,
     getexpenses,
-    addexpense
+    addexpense,
+    downloadExpenses
 }
