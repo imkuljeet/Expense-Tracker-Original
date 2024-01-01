@@ -88,29 +88,35 @@ function uploadTos3(data, filename){
     const IAM_USER_KEY = 'AKIAQMMRBQ7UGMAC43VM';
     const IAM_USER_SECRET = '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';
 
-    let s3bucket = new AWS.S3({
+        let s3bucket = new AWS.S3({
         accessKeyId: IAM_USER_KEY,
         secretAccessKey: IAM_USER_SECRET
         // Bucket: BUCKET_NAME
-    })
+        })
 
-    s3bucket.createBucket(()=>{
         var params = {
             Bucket: BUCKET_NAME,
             Key: filename,
-            Body: data
+            Body: data,
+            ACL: 'public-read'
         }
 
-        s3bucket.upload(params, (err, s3response)=>{
-            if(err){
-                console.log("Something went wrong",err)
-            }else{
-                console.log("success",s3response)
-            }
+        return new Promise((resolve,reject)=>{
+            s3bucket.upload(params, (err, s3response)=>{
+                if(err){
+                    console.log("Something went wrong",err)
+                    // reject(err);
+                }else{
+                    console.log("success",s3response);
+                    resolve(s3response.Location);
+                }
+            })
         })
-    })
 
-}
+        
+    }
+
+
 
 
 
@@ -121,8 +127,13 @@ const downloadExpenses = async (req, res) => {
       console.log(expenses);
 
       const stringifiedExpenses = JSON.stringify(expenses);
-      const filename = 'Expense.txt';
-      const fileURl = uploadTos3(stringifiedExpenses,filename);
+
+      const userId = req.user.id;
+
+      //It should depend upon userid
+      const filename = `Expense${userId}/${new Date()}.txt`;
+      const fileURl = await uploadTos3(stringifiedExpenses,filename);
+      console.log(fileURl);
       res.status(200).json({ fileURl, success: true })
     
 

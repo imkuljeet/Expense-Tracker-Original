@@ -137,7 +137,7 @@ rzp1.on('payment.failed', function (response){
 }
 
 function download(){
-  const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
 
   axios.get('http://localhost:3000/expense/download', { headers: {"Authorization" : token} })
   .then((response) => {
@@ -145,7 +145,7 @@ function download(){
           //the bcakend is essentially sending a download link
           //  which if we open in browser, the file would download
           var a = document.createElement("a");
-          a.href = response.data.fileUrl;
+          a.href = response.data.fileURl;
           a.download = 'myexpense.csv';
           a.click();
       } else {
@@ -157,3 +157,5 @@ function download(){
       showError(err)
   });
 }
+
+
