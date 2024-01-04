@@ -11,6 +11,8 @@ router.get('/download', userauthentication.authenticate, expenseController.downl
 
 router.get('/getexpenses', userauthentication.authenticate ,  expenseController.getexpenses )
 
+router.get('/getexpensesz',userauthentication.authenticate,expenseController.addexpensetopagination);
+
 router.delete('/deleteexpense/:expenseid', userauthentication.authenticate , expenseController.deleteexpense)
 
 module.exports = router;

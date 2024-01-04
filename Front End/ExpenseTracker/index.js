@@ -33,25 +33,54 @@ function parseJwt (token) {
   return JSON.parse(jsonPayload);
 }
 
-window.addEventListener('DOMContentLoaded', ()=> {
-  const token  = localStorage.getItem('token')
-  const decodeToken = parseJwt(token)
-  console.log(decodeToken)
-  const ispremiumuser = decodeToken.ispremiumuser
-  if(ispremiumuser){
-      showPremiumuserMessage()
-      showLeaderboard()
-  }
-  axios.get('http://localhost:3000/expense/getexpenses', { headers: {"Authorization" : token} })
-  .then(response => {
-          response.data.expenses.forEach(expense => {
+// window.addEventListener('DOMContentLoaded', ()=> {
+//   const token  = localStorage.getItem('token')
+//   const decodeToken = parseJwt(token)
+//   console.log(decodeToken)
+//   const ispremiumuser = decodeToken.ispremiumuser
+//   if(ispremiumuser){
+//       showPremiumuserMessage()
+//       showLeaderboard()
+//   }
+//   axios.get('http://localhost:3000/expense/getexpenses', { headers: {"Authorization" : token} })
+//   .then(response => {
+//           response.data.expenses.forEach(expense => {
 
-              addNewExpensetoUI(expense);
-          })
-  }).catch(err => {
-      showError(err)
-  })
+//               addNewExpensetoUI(expense);
+//           })
+//   }).catch(err => {
+//       showError(err)
+//   })
+
+//   // Add the following code inside the DOMContentLoaded event listener
+// loadExpenses();
+
+// });
+
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  const decodeToken = parseJwt(token);
+  console.log(decodeToken);
+  const ispremiumuser = decodeToken.ispremiumuser;
+  if (ispremiumuser) {
+    showPremiumuserMessage();
+    showLeaderboard();
+  }
+
+  axios.get('http://localhost:3000/expense/getexpenses', { headers: { "Authorization": token } })
+    .then(response => {
+      response.data.expenses.forEach(expense => {
+        addNewExpensetoUI(expense);
+      });
+    })
+    .catch(err => {
+      showError(err);
+    });
+
+  // Move the following code inside the DOMContentLoaded event listener
+  loadExpenses();
 });
+
 
 function addNewExpensetoUI(expense){
   const parentElement = document.getElementById('listOfExpenses');
@@ -157,5 +186,38 @@ function download(){
       showError(err)
   });
 }
+
+
+let currentPage = 1;
+
+function loadExpenses(direction) {
+  if (direction === 'prev' && currentPage > 1) {
+    currentPage--;
+  } else if (direction === 'next') {
+    currentPage++;
+  }
+
+  const token = localStorage.getItem('token');
+  axios.get(`http://localhost:3000/expense/getexpensesz?page=${currentPage}`, {
+    headers: { Authorization: token },
+  })
+  .then(response => {
+    const expenses = response.data.expenses;
+    displayExpenses(expenses);
+    document.getElementById('currentPage').innerText = currentPage;
+  })
+  .catch(err => {
+    showError(err);
+  });
+}
+
+function displayExpenses(expenses) {
+  const parentElement = document.getElementById('listOfExpenses');
+  parentElement.innerHTML = ''; // Clear existing content
+  expenses.forEach(expense => {
+    addNewExpensetoUI(expense);
+  });
+}
+
 
 

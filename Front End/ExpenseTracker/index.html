@@ -31,6 +31,12 @@
     <ul id='listOfExpenses'>
 
     </ul>
+    <div id="pagination">
+        <button id="prevPage" onclick="loadExpenses('prev')">Previous</button>
+        <span id="currentPage">1</span>
+        <button id="nextPage" onclick="loadExpenses('next')">Next</button>
+      </div>
+      
     <ul id="leaderboard"></ul>
     <script src='./index.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

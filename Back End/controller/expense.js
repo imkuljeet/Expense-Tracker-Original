@@ -144,9 +144,30 @@ const downloadExpenses = async (req, res) => {
     }
   };
 
+  const addexpensetopagination = async (req, res) => {
+    try {
+      const page = req.query.page || 1;
+      const itemsPerPage = 3;
+      const offset = (page - 1) * itemsPerPage;
+  
+      // Assuming you have a Sequelize query to fetch expenses with pagination
+      const expenses = await Expense.findAll({
+        limit: itemsPerPage,
+        offset: offset,
+        order: [['createdAt', 'DESC']], // Adjust the order as needed
+      });
+  
+      res.json({ expenses });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
 module.exports = {
     deleteexpense,
     getexpenses,
     addexpense,
-    downloadExpenses
+    downloadExpenses,
+    addexpensetopagination
 }
