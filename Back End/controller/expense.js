@@ -145,23 +145,41 @@ const downloadExpenses = async (req, res) => {
   };
 
   const addexpensetopagination = async (req, res) => {
+    // try {
+    //   const page = req.query.page || 1;
+    //   const itemsPerPage = 3;
+    //   const offset = (page - 1) * itemsPerPage;
+  
+    //   // Assuming you have a Sequelize query to fetch expenses with pagination
+    //   const expenses = await Expense.findAll({
+    //     limit: itemsPerPage,
+    //     offset: offset,
+    //     order: [['createdAt', 'DESC']], // Adjust the order as needed
+    //   });
+  
+    //   res.json({ expenses });
+    // } catch (error) {
+    //   console.error(error);
+    //   res.status(500).json({ error: 'Internal Server Error' });
+    // }
+
     try {
-      const page = req.query.page || 1;
-      const itemsPerPage = 3;
-      const offset = (page - 1) * itemsPerPage;
-  
-      // Assuming you have a Sequelize query to fetch expenses with pagination
-      const expenses = await Expense.findAll({
-        limit: itemsPerPage,
-        offset: offset,
-        order: [['createdAt', 'DESC']], // Adjust the order as needed
-      });
-  
-      res.json({ expenses });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+        const page = req.query.page || 1;
+        const pageSize = parseInt(req.query.pageSize, 10) || 10; // Parse to integer, default to 10 if not set
+        const offset = (page - 1) * pageSize;
+    
+        // Assuming you have a Sequelize query to fetch expenses with pagination
+        const expenses = await Expense.findAll({
+          limit: pageSize,
+          offset: offset,
+          order: [['createdAt', 'DESC']], // Adjust the order as needed
+        });
+    
+        res.json({ expenses });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
   }
 
 module.exports = {

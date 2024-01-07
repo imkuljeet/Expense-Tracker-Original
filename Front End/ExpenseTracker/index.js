@@ -190,6 +190,29 @@ function download(){
 
 let currentPage = 1;
 
+// function loadExpenses(direction) {
+//   if (direction === 'prev' && currentPage > 1) {
+//     currentPage--;
+//   } else if (direction === 'next') {
+//     currentPage++;
+//   }
+
+//   const token = localStorage.getItem('token');
+//   axios.get(`http://localhost:3000/expense/getexpensesz?page=${currentPage}`, {
+//     headers: { Authorization: token },
+//   })
+//   .then(response => {
+//     const expenses = response.data.expenses;
+//     displayExpenses(expenses);
+//     document.getElementById('currentPage').innerText = currentPage;
+//   })
+//   .catch(err => {
+//     showError(err);
+//   });
+// }
+
+// Modify the existing loadExpenses function
+// Modify the existing loadExpenses function
 function loadExpenses(direction) {
   if (direction === 'prev' && currentPage > 1) {
     currentPage--;
@@ -197,8 +220,10 @@ function loadExpenses(direction) {
     currentPage++;
   }
 
+  const pageSize = localStorage.getItem('pageSize') || 10; // Default to 10 if not set
   const token = localStorage.getItem('token');
-  axios.get(`http://localhost:3000/expense/getexpensesz?page=${currentPage}`, {
+
+  axios.get(`http://localhost:3000/expense/getexpensesz?page=${currentPage}&pageSize=${pageSize}`, {
     headers: { Authorization: token },
   })
   .then(response => {
@@ -211,6 +236,8 @@ function loadExpenses(direction) {
   });
 }
 
+
+
 function displayExpenses(expenses) {
   const parentElement = document.getElementById('listOfExpenses');
   parentElement.innerHTML = ''; // Clear existing content
@@ -218,6 +245,14 @@ function displayExpenses(expenses) {
     addNewExpensetoUI(expense);
   });
 }
+
+// Add this function to your existing JavaScript code
+function updatePageSize() {
+  const pageSize = document.getElementById('pageSize').value;
+  localStorage.setItem('pageSize', pageSize);
+  loadExpenses(); // Reload expenses with the updated page size
+}
+
 
 
 

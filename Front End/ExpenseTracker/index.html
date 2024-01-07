@@ -31,6 +31,16 @@
     <ul id='listOfExpenses'>
 
     </ul>
+    <!-- Add this to your HTML form -->
+<label for="pageSize">Number of Expenses to Show:</label>
+<select id="pageSize" name="pageSize" onchange="updatePageSize()">
+  <option value="5">5</option>
+  <option value="10">10</option>
+  <option value="15">15</option>
+  <!-- Add more options as needed -->
+</select>
+
+
     <div id="pagination">
         <button id="prevPage" onclick="loadExpenses('prev')">Previous</button>
         <span id="currentPage">1</span>
