@@ -18,16 +18,16 @@ const forgotpassword = async (req, res) => {
             });
 
         const transporter = nodemailer.createTransport({
-            host: 'smtp-relay.brevo.com',
-            port: 587,
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
             auth: {
-                user: 'iamkkashyap@gmail.com',
-                pass: 'OC3fwv7HZ2gATFRL'
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
             }
         });
 
         const mailOptions = {
-            from: 'iamkkashyap@gmail.com',
+            from: process.env.SMTP_USER,
             to: email,
             subject: 'DUMMY MAIL - Welcome to NodeJS Brevo Combo',
             text: 'Its a DUMMY MAIL..This is an email using Brevo so that we can send mail easily',
@@ -121,3 +121,4 @@ module.exports = {
     updatepassword,
     resetpassword
 }
+

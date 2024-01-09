@@ -3,6 +3,7 @@ const User = require('../models/users');
 const sequelize = require('../util/database');
 const AWS = require('aws-sdk');
 
+
 const addexpense = async (req, res) => {
     const t = await sequelize.transaction();
     try {
@@ -78,20 +79,15 @@ const deleteexpense = async (req, res) => {
     }
 }
 
-// const downloadExpenses =  async (req, res) => {
-//     const expenses = await req.expenses.getexpenses();
-//     console.log(expenses);
-// };
-
 function uploadTos3(data, filename){
-    const BUCKET_NAME ='expensetrackingapp22';
-    const IAM_USER_KEY = 'AKIAQMMRBQ7UGMAC43VM';
-    const IAM_USER_SECRET = '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';
+    const BUCKET_NAME = process.env.BUCKET_NAME;
+    const IAM_USER_KEY = process.env.IAM_USER_KEY;
+    const IAM_USER_SECRET = process.env.IAM_USER_SECRET;
+
 
         let s3bucket = new AWS.S3({
         accessKeyId: IAM_USER_KEY,
         secretAccessKey: IAM_USER_SECRET
-        // Bucket: BUCKET_NAME
         })
 
         var params = {
@@ -115,10 +111,6 @@ function uploadTos3(data, filename){
 
         
     }
-
-
-
-
 
 const downloadExpenses = async (req, res) => {
     try {
@@ -145,24 +137,6 @@ const downloadExpenses = async (req, res) => {
   };
 
   const addexpensetopagination = async (req, res) => {
-    // try {
-    //   const page = req.query.page || 1;
-    //   const itemsPerPage = 3;
-    //   const offset = (page - 1) * itemsPerPage;
-  
-    //   // Assuming you have a Sequelize query to fetch expenses with pagination
-    //   const expenses = await Expense.findAll({
-    //     limit: itemsPerPage,
-    //     offset: offset,
-    //     order: [['createdAt', 'DESC']], // Adjust the order as needed
-    //   });
-  
-    //   res.json({ expenses });
-    // } catch (error) {
-    //   console.error(error);
-    //   res.status(500).json({ error: 'Internal Server Error' });
-    // }
-
     try {
         const page = req.query.page || 1;
         const pageSize = parseInt(req.query.pageSize, 10) || 10; // Parse to integer, default to 10 if not set
@@ -189,3 +163,4 @@ module.exports = {
     downloadExpenses,
     addexpensetopagination
 }
+

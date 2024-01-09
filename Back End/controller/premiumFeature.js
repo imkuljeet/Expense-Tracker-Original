@@ -10,7 +10,6 @@ const getUserLeaderBoard = async (req, res) => {
             order: [["totalExpenses", 'DESC']]
             
         })
-        // console.log(leaderboardofusers);
         res.status(200).json(leaderboardofusers)     
 } catch (err){
     console.log(err)
